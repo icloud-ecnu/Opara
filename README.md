@@ -5,7 +5,7 @@ ${Opara}$ is a lightweight and resource-aware DNN Operator parallel scheduling f
 # System overview of ${Opara}$
 
 ${Opara}$ comprises four components including Model Profiler, Operator Launcher, Stream Allocator, and Graph Capturer. As illustrated in  the subsequent figure, ${Opara}$ takes DNN models and input tensors (i.e., inference data) from users. According to the operator dependencies in the DAG of DNN models, the Stream Allocator first employs a stream allocation algorithm to determine which stream the operators should be allocated to. The Model Profiler then gathers the resource requirements of each operator during the model profiling process. With such resource requirements of operators, the Operator Launcher further employs a resource-aware operator launch algorithm to optimize the operator launch order on GPUs. Finally, the Graph Capturer generates a parallelized CUDA Graph by combing the stream allocation plan and operator launch order, thereby enabling efficient DNN inference on GPUs.
-![overview](https://github.com/OparaSys/Opara/blob/main/figures/overview.png)
+![overview](https://github.com/icloud-ecnu/Opara/blob/main/figures/overview.png?raw=true)
 
 # Installation
 
