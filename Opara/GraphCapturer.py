@@ -133,7 +133,8 @@ def capturer(inputs, model, copy_outputs: bool = False):
         assert len(static_inputs) == len(new_inputs), f"{len(static_inputs)} == {len(new_inputs)}"
         for dst, src in zip(static_inputs, new_inputs):
             dst.copy_(src)  # cuda graph can only read data from the same address
-        g.replay()
+        with torch.no_grad():
+            g.replay()
         if copy_outputs:
             return [x.clone() for x in static_outputs]
         else:

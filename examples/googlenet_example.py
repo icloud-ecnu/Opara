@@ -8,24 +8,25 @@ import numpy as np
 from Opara import GraphCapturer
 
 def run_torch_model(model, inputs, iterations, warm_ups):
-    start_events = [torch.cuda.Event(enable_timing=True) for _ in range(iterations)]
+    start_events = [torch.cuda.Event(enable_timing=True) for _ in range(iterations)]    
     end_events = [torch.cuda.Event(enable_timing=True) for _ in range(iterations)]
     # model = torch.compile(model)
     # Warmup steps
-    for _ in range(warm_ups):
-        model(*inputs) # don't record time
-    for i in range(iterations):
-        # x_torch = torch.randint(low=0, high=256, size=(1, 3, 224, 224), dtype=torch.float32).to(device="cuda:0")
-        flush_cache()
-        torch.cuda._sleep(1_000_000)
-        start_events[i].record()
-        y = model(*inputs)
-        end_events[i].record()
-    torch.cuda.synchronize()
-    times = [s.elapsed_time(e) for s, e in zip(start_events, end_events)]
-    std = np.std(times)
-    output_str = ('Time of native PyTorch:', str(np.mean(times)) + ' ms', "std: " + str(std))
-    print('{:<30} {:<20} {:<20}'.format(*output_str))
+    with torch.no_grad():
+        for _ in range(warm_ups):
+            model(*inputs) # don't record time
+        for i in range(iterations):
+            # x_torch = torch.randint(low=0, high=256, size=(1, 3, 224, 224), dtype=torch.float32).to(device="cuda:0")
+            flush_cache()
+            torch.cuda._sleep(1_000_000)
+            start_events[i].record()
+            y = model(*inputs)
+            end_events[i].record()
+        torch.cuda.synchronize()
+        times = [s.elapsed_time(e) for s, e in zip(start_events, end_events)]
+        std = np.std(times)
+        output_str = ('Time of native PyTorch:', str(np.mean(times)) + ' ms', "std: " + str(std))
+        print('{:<30} {:<20} {:<20}'.format(*output_str))
     return y
 
 def run_sequence_graph(symbolic_traced, inputs, iterations, warm_ups, start_index, end_index):
