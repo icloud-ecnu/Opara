@@ -82,7 +82,8 @@ def capturer(inputs, model, copy_outputs: bool = False):
     static_inputs = [torch.zeros_like(x, device='cuda') for x in inputs]
 
     dynamo.reset()
-    explanation, out_guards, graphs, ops_per_graph, break_reasons, explanation_verbose = dynamo.explain(model, *inputs)
+    with torch.no_grad():
+        explanation, out_guards, graphs, ops_per_graph, break_reasons, explanation_verbose = dynamo.explain(model, *inputs)
     fx_module = graphs[0]
     # print(fx_module.graph, file=output_file)
     fx_module.cuda()

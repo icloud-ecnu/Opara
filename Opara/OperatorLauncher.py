@@ -2,6 +2,7 @@ from functools import reduce
 from operator import mul
 from Opara import ModelProfiler
 
+from collections import deque
 import os
 path = os.path.abspath(os.path.dirname(__file__))
 output_file_path = path + '/profile_result/output.txt'
@@ -9,6 +10,18 @@ output_file = open(output_file_path, "w")
 
 
 def launch(nodes, result, in_degree, sharedMemPerBlock, regsPerBlock, maxThreadsPerBlock):
+    def is_mem_access_intensive(node):
+        memory_intensive_op = ['add', 'cast', 'ceil', 'clip', 'concat', 'exp', 'floor', 'log', 
+                            'gelu', 'neg', 'pow', 'reciprocal', 'relu', 'sigmoid', 'slice', 'relu'
+                            'sqrt', 'sub', 'tanh', 'transpose', 'unsqueeze', 'view', 'avg_pool',
+                            'reshape', 'max_pool', 'adaptive_avg_pool', 'adaptive_max_pool', 'premute',
+                            'flatten', 'dropout', 'batch_norm', 'layer_norm', 'instance_norm', 'contiguous', 'ones', 'to']
+        for op in memory_intensive_op:
+            if op in node.name:
+                # print("memory_intensive_op:", node.name)
+                return True
+        return False
+    
     def pop_from_queue(q):
         ret_node_name = q[0]
 
@@ -21,7 +34,12 @@ def launch(nodes, result, in_degree, sharedMemPerBlock, regsPerBlock, maxThreads
                 thread_num = reduce(mul, nodes[node_name].info[0]["args"]["block"]) / maxThreadsPerBlock
                 registers_num = thread_num * nodes[node_name].info[0]["args"]["registers per thread"] / regsPerBlock
                 request = [shared_memory, thread_num, registers_num]
+                # metric = max(shared_memory, max(thread_num, registers_num))
+                # metric = thread_num
+                # metric = achieved_occupancy
                 metric = shared_memory
+                # if metric == min_metric:
+                #     print("same metric:", node_name, ret_node_name)
                 if metric < min_metric:
                     min_metric = metric
                     ret_node_name = node_name
@@ -29,18 +47,38 @@ def launch(nodes, result, in_degree, sharedMemPerBlock, regsPerBlock, maxThreads
 
         return ret_node_name
     
-    q = []
+    memory_queue = deque()
+    not_memory_queue = deque()
     for node_name, degree in in_degree.items():
         if degree == 0:
-            q.append(node_name)
-    while q:
+            if is_mem_access_intensive(nodes.get(node_name)):
+                memory_queue.append(node_name)
+            else:
+                not_memory_queue.append(node_name)
+    flag = True
+    while memory_queue or not_memory_queue:
+
+        flag = not flag
+        if memory_queue and not_memory_queue:
+            if flag:
+                q = memory_queue
+            else:
+                q = not_memory_queue
+        else:
+            if memory_queue:
+                q = memory_queue
+            else:
+                q = not_memory_queue
         cur_node_name = pop_from_queue(q)
         result.append(cur_node_name)
 
         for succ_node in nodes.get(cur_node_name).users:
             in_degree[succ_node.name] -= 1
             if in_degree[succ_node.name] == 0:
-                q.append(succ_node.name)
+                if is_mem_access_intensive(nodes.get(succ_node.name)):
+                    memory_queue.append(succ_node.name)
+                else:
+                    not_memory_queue.append(succ_node.name)
     return result
 
 
@@ -53,7 +91,7 @@ def get_resource_from_json(path):
 
     step_num = 0
     for event in data["traceEvents"]:
-        if "run" in event["name"] and "run_node" not in event["name"]:
+        if "torch/fx/interpreter.py(97): run" in event["name"] and "run_node" not in event["name"]:
             step_num += 1
     # print("step_num", step_num)
    
@@ -150,16 +188,11 @@ def recompile(model_class_name, graph_module, inputs):
         if not hasattr(node, 'info'):
             setattr(node, 'info', node2kernels[i])
 
-    pre = None
     result, torch_nodes = get_topo(graph_module.graph.nodes, sharedMemPerBlock, regsPerBlock, maxThreadsPerBlock)
 
-    for name in result:
-        if pre == None:
-            pre = torch_nodes[name]
-        else:
-            pre._next = torch_nodes[name]
-            torch_nodes[name]._prev = pre
-            pre = torch_nodes[name]
+    size = len(result)
+    for i in range(size - 1):
+        torch_nodes[result[i]].append(torch_nodes[result[i+1]])
     # print(graph_module.graph, file=output_file)
     graph_module.graph.lint()
     graph_module.recompile()

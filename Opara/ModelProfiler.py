@@ -4,8 +4,6 @@ import torch.profiler
 from torch.fx import Interpreter
 import torch._dynamo.eval_frame
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-DEVICE = os.environ.get("CUDA_VISIBLE_DEVICES")
     
 
 def profile(symbolic_traced, inputs, path):

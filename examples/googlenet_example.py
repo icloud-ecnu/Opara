@@ -83,6 +83,9 @@ cache = torch.empty(int(4 * (1024 ** 2)), dtype=torch.int8, device='cuda')
 def flush_cache():
     cache.zero_()
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+DEVICE = os.environ.get("CUDA_VISIBLE_DEVICES")
+
 if __name__ == '__main__':
     warm_ups = 10
     iterations = 30
