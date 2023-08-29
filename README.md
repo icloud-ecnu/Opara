@@ -40,10 +40,11 @@ python examples/googlenet_example.py
 ```
 output:
 ```shell
-Time of native PyTorch:        3.697766415278117 ms std: 0.3182025326972793
-Time of sequential CUDA Graph: 1.9705877343813578 ms std: 0.135356647385814
-STAGE:2023-06-21 10:50:27 38128:38128 ActivityProfilerController.cpp:311] Completed Stage: Warm Up
-STAGE:2023-06-21 10:50:27 38128:38128 ActivityProfilerController.cpp:317] Completed Stage: Collection
-STAGE:2023-06-21 10:50:27 38128:38128 ActivityProfilerController.cpp:321] Completed Stage: Post Processing
-Time of Opara:                 1.161413383483887 ms std: 0.03592966765019866
+Time of native PyTorch:        3.587766415278117 ms std: 0.05031060025425075
+Time of sequential CUDA Graph: 1.8679669356346131 ms std: 0.009087139973587288
+STAGE:2023-08-28 19:19:41 49050:49050 ActivityProfilerController.cpp:311] Completed Stage: Warm Up
+STAGE:2023-08-28 19:19:41 49050:49050 ActivityProfilerController.cpp:317] Completed Stage: Collection
+STAGE:2023-08-28 19:19:41 49050:49050 ActivityProfilerController.cpp:321] Completed Stage: Post Processing
+Time of Opara:                 1.11034135492642721 ms std: 0.0088255187530593
+output of PyTorch == output of Opara: True     Absolute difference: tensor(0., device='cuda:0')
 ```
