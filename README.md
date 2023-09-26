@@ -1,10 +1,10 @@
-## ${Opara}$
+## *Opara*
 
-${Opara}$ is a lightweight and resource-aware DNN Operator parallel scheduling framework to accelerate the execution of DNN inference on GPUs. Specifically, ${Opara}$ first employs CUDA Graph and CUDA Streams to automatically parallelize the execution of multiple DNN operators. It further leverages the resource requirements of DNN operators to judiciously adjust the operator launch order on GPUs to expedite DNN inference.
+*Opara* is a lightweight and resource-aware DNN Operator parallel scheduling framework to accelerate the execution of DNN inference on GPUs. Specifically, *Opara* first employs CUDA Graph and CUDA Streams to automatically parallelize the execution of multiple DNN operators. It further leverages the resource requirements of DNN operators to judiciously adjust the operator launch order on GPUs to expedite DNN inference.
 
-## System overview of ${Opara}$
+## System overview of *Opara*
 
-${Opara}$ comprises four components including Model Profiler, Operator Launcher, Stream Allocator, and Graph Capturer. As illustrated in  the subsequent figure, ${Opara}$ takes DNN models and input tensors (i.e., inference data) from users. According to the operator dependencies in the DAG of DNN models, the Stream Allocator first employs a stream allocation algorithm to determine which stream the operators should be allocated to. The Model Profiler then gathers the resource requirements of each operator during the model profiling process. With such resource requirements of operators, the Operator Launcher further employs a resource-aware operator launch algorithm to optimize the operator launch order on GPUs. Finally, the Graph Capturer generates a parallelized CUDA Graph by combing the stream allocation plan and operator launch order, thereby enabling efficient DNN inference on GPUs.
+*Opara* comprises four components including Model Profiler, Operator Launcher, Stream Allocator, and Graph Capturer. As illustrated in  the subsequent figure, *Opara* takes DNN models and input tensors (i.e., inference data) from users. According to the operator dependencies in the DAG of DNN models, the Stream Allocator first employs a stream allocation algorithm to determine which stream the operators should be allocated to. The Model Profiler then gathers the resource requirements of each operator during the model profiling process. With such resource requirements of operators, the Operator Launcher further employs a resource-aware operator launch algorithm to optimize the operator launch order on GPUs. Finally, the Graph Capturer generates a parallelized CUDA Graph by combining the stream allocation plan and operator launch order, thereby enabling efficient DNN inference on GPUs.
 ![overview](https://github.com/icloud-ecnu/Opara/blob/main/figures/overview.png?raw=true)
 
 ## Installation
@@ -17,7 +17,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-The subsequent code snippet illustrates the utilization of ${Opara}$ to expedite model inference. It requires the provision of your model and the corresponding input tensors. Then you can utilize the interface ```GraphCapturer.capturer(inputs, model)```, which returns a callable. Finally, feed the callable with  input tensors that serves as a parameter to yield the inference outcome.
+The subsequent code snippet illustrates the utilization of *Opara* to expedite model inference. It requires the provision of your model and the corresponding input tensors. Then you can utilize the interface ```GraphCapturer.capturer(inputs, model)```, which returns a callable. Finally, feed the callable with  input tensors that serves as a parameter to yield the inference outcome.
 ```shell
 import torch
 import torchvision
@@ -34,7 +34,7 @@ output = Opara(*inputs)
 
 ## Example
 
-We provide a Python script that measures the performance of native PyTorch, sequential CudaGraph, and ${Opara}$. Execute the following command to generate the corresponding output.
+We provide a Python script that measures the performance of native PyTorch, sequential CudaGraph, and *Opara*. Execute the following command to generate the corresponding output.
 ```shell
 python examples/googlenet_example.py
 ```
@@ -50,8 +50,8 @@ output of PyTorch == output of Opara: True     Absolute difference: tensor(0., d
 ```
 
 ## Publication
-### Opara Journal Version:
+### *Opara* Journal Version:
 [1] Aodong Chen, Fei Xu, Li Han, Yuan Dong, Li Chen, Zhi Zhou, and Fangming Liu, "[Opara: Exploiting Operator Parallelism for Expediting DNN Inference on GPUs](https://github.com/icloud-ecnu/Opara/blob/main/pdf/tc-opara.pdf)," submitted to IEEE Transactions on Computers, 2023.
 
-### Opara Conference Version:
+### *Opara* Conference Version:
 [2] Aodong Chen, Fei Xu, Yuan Dong, Li Chen, Zhi Zhou, and Fangming Liu, “[Opara: Exploring Operator Parallelism for Expediting DNN Inference on GPUs](https://github.com/icloud-ecnu/Opara/blob/main/pdf/ccfsys-opara.pdf)," in: Proc. of CCFSys, Nanchang, China, August 4-5, 2023. (**DPCS Best Student Paper Award**)
