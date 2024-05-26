@@ -22,17 +22,25 @@ def assign_stream(graph):
 
 def Opara(graph):
     streams, events = [], []
+    node_to_bool = {}
+
+    for node in graph.nodes:
+        node_to_bool[node] = False
+
     for node in graph.nodes:
         node.event = Event()
         events.append(node.event)
         for input_node in node.all_input_nodes:
-            if node == list(input_node.users.keys())[0]:
+            if node_to_bool[input_node] is False:
                 node.stream = input_node.stream
+                node_to_bool[input_node] = True
                 break
         if node.stream is None:
             node.stream = Stream()
             streams.append(node.stream)
     return streams, events
+    
+    
 
 from torch.cuda.streams import Stream, Event
 import os
