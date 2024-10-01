@@ -51,7 +51,7 @@ output of PyTorch == output of Opara: True     Absolute difference: tensor(0., d
 
 ## Publication
 ### *Opara* Journal Version:
-[1] Aodong Chen, Fei Xu, Li Han, Yuan Dong, Li Chen, Zhi Zhou, and Fangming Liu, "[Opara: Exploiting Operator Parallelism for Expediting DNN Inference on GPUs](https://github.com/icloud-ecnu/Opara/blob/main/pdf/tc-opara.pdf)," submitted to IEEE Transactions on Computers, 2023.
+[1] Aodong Chen, Fei Xu, Li Han, Yuan Dong, Li Chen, Zhi Zhou, and Fangming Liu, "[Opara: Exploiting Operator Parallelism for Expediting DNN Inference on GPUs](https://github.com/icloud-ecnu/Opara/blob/main/pdf/tc-opara.pdf)," accepted by IEEE Transactions on Computers, 2024.
 
 We have also uploaded our manuscript to [Arxiv](https://arxiv.org/abs/2312.10351), and we welcome any citations of our paper during the review process of IEEE TC.
 ```
