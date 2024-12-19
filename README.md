@@ -51,9 +51,9 @@ output of PyTorch == output of Opara: True     Absolute difference: tensor(0., d
 
 ## Notes
 
-We haven’t changed the topology of computing graph, as the paper only mentions the launch order, not any modifications to the topology itself.
+- We haven’t changed the topology of computing graph, as the paper only mentions the launch order, not any modifications to the topology itself.
 
-A model profiler is required on the hardware to obtain the resource consumption of operators, which is input to Alg.2. Several configuration parameters require updating.
+- A model profiler is required on the hardware to obtain the resource consumption of operators, which is input to Alg.2. Several configuration parameters require updating.
 
 
 ## Publication
