@@ -49,6 +49,13 @@ Time of Opara:                 1.11034135492642721 ms std: 0.0088255187530593
 output of PyTorch == output of Opara: True     Absolute difference: tensor(0., device='cuda:0')
 ```
 
+## Notes
+
+We haven’t changed the topology of computing graph, as the paper only mentions the launch order, not any modifications to the topology itself.
+
+A model profiler is required on the hardware to obtain the resource consumption of operators, which is input to Alg.2. Several configuration parameters require updating.
+
+
 ## Publication
 ### *Opara* Journal Version:
 [1] Aodong Chen, Fei Xu, Li Han, Yuan Dong, Li Chen, Zhi Zhou, and Fangming Liu, "[Opara: Exploiting Operator Parallelism for Expediting DNN Inference on GPUs](https://ieeexplore.ieee.org/document/10707307)," IEEE Transactions on Computers, 2025, 71(1): 325-333. DOI: 10.1109/TC.2024.3475589.
